@@ -10,7 +10,12 @@ class AdminPanel extends StatefulWidget {
 class _AdminPanelState extends State<AdminPanel> {
   int _selectedIndex = 0;
 
-  List<String> _pages = ["Page 1", "Page 2", "Page 3", "Page 4"];
+  List<String> _pages = [
+    "Onay bekleyen kullanıcılar",
+    "Tüm kullanıcılar",
+    "Raporlamalar",
+  ];
+
   late PageController _pageController;
 
   @override
@@ -33,11 +38,14 @@ class _AdminPanelState extends State<AdminPanel> {
             onItemSelected: (index) {
               setState(() {
                 _selectedIndex = index;
-                _pageController.animateToPage(index,
-                    duration: Duration(milliseconds: 300),
-                    curve: Curves.easeInOut);
+                _pageController.animateToPage(
+                  index,
+                  duration: Duration(milliseconds: 300),
+                  curve: Curves.easeInOut,
+                );
               });
             },
+            pages: _pages,
           ),
           // Content Area
           Expanded(
@@ -50,17 +58,15 @@ class _AdminPanelState extends State<AdminPanel> {
                 });
               },
               itemBuilder: (context, index) {
-                // Display UserPage when Page 2 is selected
+                // Display corresponding pages
                 if (index == 0) {
                   return UserConfirmationListPage();
-                }
-                // Display UserPage when Page 2 is selected
-                else if (index == 1) {
+                } else if (index == 1) {
                   return UserPage();
                 } else if (index == 2) {
                   return ReportPage();
                 }
-                // Display other pages
+                // Handle additional pages if needed
                 return Center(
                   child: Text(
                     _pages[index],
@@ -79,8 +85,13 @@ class _AdminPanelState extends State<AdminPanel> {
 class NavigationPanel extends StatelessWidget {
   final int selectedIndex;
   final Function(int) onItemSelected;
+  final List<String> pages;
 
-  NavigationPanel({required this.selectedIndex, required this.onItemSelected});
+  NavigationPanel({
+    required this.selectedIndex,
+    required this.onItemSelected,
+    required this.pages,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -88,10 +99,10 @@ class NavigationPanel extends StatelessWidget {
       width: 200,
       color: Colors.grey[200],
       child: ListView.builder(
-        itemCount: 4,
+        itemCount: pages.length,
         itemBuilder: (context, index) {
           return ListTile(
-            title: Text("Page ${index + 1}"),
+            title: Text(pages[index]),
             selected: index == selectedIndex,
             onTap: () => onItemSelected(index),
           );
@@ -106,7 +117,7 @@ class UserConfirmationListPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Users with isConfirmed = 0'),
+        title: Text('Onay Bekleyen Kullanıcılar'),
       ),
       body: StreamBuilder(
         stream: FirebaseFirestore.instance
@@ -123,7 +134,7 @@ class UserConfirmationListPage extends StatelessWidget {
           }
 
           if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-            return Text('No users with isConfirmed = 0');
+            return Text('No users for waiting to confirm = 0');
           }
 
           return ListView.builder(
@@ -176,7 +187,7 @@ class UserPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('All Users'),
+        title: Text('Tüm Kullanıcılar'),
       ),
       body: StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance.collection('Users').snapshots(),
