@@ -9,7 +9,7 @@ void main() async {
   await Firebase.initializeApp(
     options: const FirebaseOptions(
         apiKey: "AIzaSyDhUeQ29Sn-AI2iaBCXFE-yQ0YadEa1RJg",
-        appId: "1:52215896362:web:1b5848308542d1fb442653",
+        appId: "1:52215896362:web:2b7b39c14c0e2e80442653",
         messagingSenderId: "52215896362",
         projectId: "unibook-e3013"),
   );

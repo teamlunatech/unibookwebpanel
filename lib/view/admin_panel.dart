@@ -238,6 +238,19 @@ class UserPage extends StatelessWidget {
           .collection('Users')
           .doc(user.uid)
           .delete();
+
+      // Delete books associated with the banned user from "Books" collection
+      QuerySnapshot booksSnapshot = await FirebaseFirestore.instance
+          .collection('books')
+          .where('user_uid', isEqualTo: user.uid)
+          .get();
+
+      for (QueryDocumentSnapshot bookDoc in booksSnapshot.docs) {
+        await FirebaseFirestore.instance
+            .collection('books')
+            .doc(bookDoc.id)
+            .delete();
+      }
     } catch (e) {
       print('Error banning user: $e');
       // Handle error appropriately
